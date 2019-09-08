@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Document</title>
+	<style>
+	    *{
+			margin:0;padding:0;
+		}
+		body,html{
+            width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+		body{
+			background: black;
+		}
+	</style>
+</head>
+<body>
+	<script src="../../public.js"></script>
+	<script>
+	    function FireWork(x,y){
+            this.x=x;
+			this.y=y;
+		}
+	     
+        //初始创建烟花
+		FireWork.prototype.init=function(){
+             this.oDiv=document.createElement('div');
+			 this.oDiv.style.cssText=`height: 10px;width: 5px;background:rgb(${rannum(0,255)},${rannum(0,255)},${rannum(0,255)});position:absolute;top:${document.documentElement.clientHeight}px;left:${this.x}px;`
+             document.body.appendChild(this.oDiv);
+             this.boxMove();
+		}
+
+		// 烟花运动
+		FireWork.prototype.boxMove=function(){
+			let _this=this
+             bufferMove(this.oDiv,{top:this.y},function(){
+				 document.body.removeChild(_this.oDiv);
+				 _this.CreateFragment();
+			 })
+		}
+		//产生一定数量的烟花
+        FireWork.prototype.CreateFragment=function(){
+            for(let i=1;i<=30;i++){
+		  	 this.oDiv=document.createElement('div');
+			 this.oDiv.style.cssText=`height: 5px;width: 5px;background:rgb(${rannum(0,255)},${rannum(0,255)},${rannum(0,255)});position:absolute;top:${this.y}px;left:${this.x}px;`
+             document.body.appendChild(this.oDiv);
+			    this.FragmentMove(this.oDiv);
+			}
+		}
+		// 烟花的向下运动
+		FireWork.prototype.FragmentMove=function(obj){
+			let initx=this.x;
+			let inity=this.y;
+		   
+			let speedx=Math.random()>=0.5?-rannum(1,15):rannum(1,15);
+			let speedy=Math.random()>=0.5?-rannum(1,15):rannum(1,15);
+			console.log(speedx,speedy)
+			obj.timer=setInterval(function(){
+				initx+=speedx;
+				inity+=speedy++;
+				if(inity>=document.documentElement.clientHeight){
+					clearInterval(obj.timer);
+					document.body.removeChild(obj);
+				}
+				obj.style.left=initx+"px";
+				obj.style.top=inity+"px";
+			},1000/60)
+			
+		}
+	   document.onclick=function(ev){
+		   var ev=ev||window.ev;
+		   new FireWork(ev.clientX,ev.clientY).init()
+	   }
+	</script>
+</body>
+</html>
